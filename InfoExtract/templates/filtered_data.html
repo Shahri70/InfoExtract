@@ -1,0 +1,26 @@
+{% if filtered_df is defined %}
+<p>Number of Rows in filtered_df: {{ filtered_df.shape[0] }}</p>
+<h2>Filtered Data:</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Chunk</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for index, row in filtered_df.iterrows() %}
+        <tr>
+            <td>
+                <div class="chunk-text">
+                    <span class="short-text">{{ row['chunk'][:100] }}{% if row['chunk']|length > 100 %}...{% endif %}</span>
+                    <span class="full-text" style="display: none;">{{ row['chunk'] }}</span>
+                    <a href="#" class="toggle-text">Show More</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </tbody>
+</table>
+{% endif %}

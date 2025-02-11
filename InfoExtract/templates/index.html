@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topic Filter</title>
+</head>
+<body>
+    <h1>Filter Data by Topic</h1>
+    <form id="filter-form">
+        <label for="selected_topic">Select a Topic:</label>
+        <select id="selected_topic" name="selected_topic">
+            {% for topic in topics %}
+                <option value="{{ topic }}">{{ topic }}</option>
+            {% endfor %}
+        </select>
+        <input type="button" value="Filter" onclick="filterData()">
+    </form>
+
+    <div id="filtered_data">
+        {% if filtered_df is defined %}
+        <p>Number of Rows in filtered_df: {{ filtered_df.shape[0] }}</p> {# Debug message #}
+        <h2>Filtered Data:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Chunk</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in filtered_df.iterrows() %}
+                <tr>
+                    <td>
+                        <div class="chunk-text">
+                            <span class="short-text">{{ row['chunk'][:100] }}{% if row['chunk']|length > 100 %}...{% endif %}</span>
+                            <span class="full-text" style="display: none;">{{ row['chunk'] }}</span>
+                            <a href="#" class="toggle-text">Show More</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        function filterData() {
+            var selectedTopic = document.getElementById("selected_topic").value;
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('filter_data') }}",
+                data: { selected_topic: selectedTopic },
+                success: function(response) {
+                    $("#filtered_data").html(response);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
